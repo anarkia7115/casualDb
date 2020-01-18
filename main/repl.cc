@@ -1,8 +1,7 @@
 #include <iostream>
-#include <string>
-#include "my_exception.cc"
+// #include "my_exception.cc"
 #include "repl.h"
-#include "statement.cc"
+#include "statement.h"
 
 using namespace std;
 
@@ -10,7 +9,6 @@ int main(int argc, char* argv[]) {
     string input;
     while(true) {
         PrintPrompt();
-        // cin >> input;
         getline(cin, input);
 
         if (input[0] == '.') {
@@ -25,7 +23,7 @@ int main(int argc, char* argv[]) {
         }
 
         Statement statement = Statement(input);
-        switch(statement.prepare()) {
+        switch(statement.Prepare()) {
             case (kPrepareSuccess):
                 break;
             case (kPrepareUnrecognizedStatement):
@@ -34,13 +32,14 @@ int main(int argc, char* argv[]) {
                 continue;
         }
 
-        statement.execute();
+        statement.Execute();
         cout << "Executed!" << endl;
     }
 }
 
 int DoMetaCommand(string input) {
     if (input.compare(".exit") == 0) {
+        cout << "Bye!" << endl;
         exit(EXIT_SUCCESS);
     } else {
         return kMetaCommandUnrecognizedCommand;
