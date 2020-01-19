@@ -3,8 +3,6 @@
 #include "repl.h"
 #include "statement.h"
 
-using namespace std;
-
 int main(int argc, char* argv[]) {
     string input;
     while(true) {
@@ -47,5 +45,5 @@ int DoMetaCommand(string input) {
 }
 
 void PrintPrompt() {
-    cout << "be cool > "; 
+    cout << "hello, zen > "; 
 }

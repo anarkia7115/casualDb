@@ -1,6 +1,5 @@
 #include <exception>
-using namespace std;
-class MetaCommandException: public exception {
+class MetaCommandException: public std::exception {
     public:
     const char* what() const throw() {
         return "Unrecognized command ";
