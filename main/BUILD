@@ -19,6 +19,7 @@ cc_library(
         ":statement",
         ":utils", 
     ],
+    visibility = ["//test:__pkg__"],
 )
 
 cc_binary(
