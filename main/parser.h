@@ -12,8 +12,14 @@ PrepareResult ParseInsert(string query, Row &row_to_insert) {
     */
 
     istringstream query_stream(query);
-    query_stream >> row_to_insert.id >> row_to_insert.url 
+    string query_keyword;
+    query_stream >> query_keyword >> row_to_insert.id >> row_to_insert.url 
         >> row_to_insert.title;
 
+    if (query_keyword != "insert") {
+        return kPrepareUnrecognizedStatement;
+    } else {
+        return kPrepareSuccess;
+    }
 }
 #endif // PARSER_H_
