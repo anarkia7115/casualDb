@@ -4,40 +4,48 @@
 #include "statement.h"
 
 int main(int argc, char* argv[]) {
-    string input;
+    std::string input;
+    Table table = Table();
     while(true) {
         PrintPrompt();
-        getline(cin, input);
+        std::getline(std::cin, input);
 
+        // meta command
         if (input[0] == '.') {
             switch(DoMetaCommand(input)) {
                 case (kMetaCommandSuccess):
                     continue;
                 case(kMetaCommandUnrecognizedCommand):
-                    cout << "Unrecognized command '" << input 
-                        << "'." << endl;
+                    std::cout << "Unrecognized command '" << input 
+                        << "'." << std::endl;
                     continue;
             }
         }
 
-        Statement statement = Statement(input);
+        // parse statement
+        Statement statement = Statement(input, &table);
         switch(statement.Prepare()) {
             case (kPrepareSuccess):
                 break;
             case (kPrepareUnrecognizedStatement):
-                cout << "Unrecognized keyword at start of '" << input
-                    << "'." << endl;
+                std::cout << "Unrecognized keyword at start of '" << input
+                    << "'." << std::endl;
+                continue;
+            case (kPrepareSyntaxError):
+                std::cout << "Syntax Error '" << input
+                    << "'." << std::endl;
                 continue;
         }
 
+        // execute statement
         statement.Execute();
-        cout << "Executed!" << endl;
+        std::cout << "Executed!" << std::endl;
     }
 }
 
-int DoMetaCommand(string input) {
+int DoMetaCommand(std::string input) {
     if (input.compare(".exit") == 0) {
-        cout << "Bye!" << endl;
+        std::cout << "Bye!" << std::endl;
         exit(EXIT_SUCCESS);
     } else {
         return kMetaCommandUnrecognizedCommand;
@@ -45,5 +53,5 @@ int DoMetaCommand(string input) {
 }
 
 void PrintPrompt() {
-    cout << "hello, zen > "; 
+    std::cout << "hello, zen > "; 
 }
