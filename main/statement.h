@@ -2,36 +2,20 @@
 #define STATEMENT_H_
 #include <map>
 #include <string>
-using namespace std;
-
-typedef enum {
-    kStatementInsert, 
-    kStatementSelect
-} StatementType;
-
-typedef enum {
-    kPrepareSuccess, 
-    kPrepareUnrecognizedStatement
-} PrepareResult;
-
-typedef struct {
-    uint32_t id;
-    string url;
-    string title;
-} Row;
+#include "row.h"
+#include "table.h"
 
 class Statement {
-    private:
+  private:
     StatementType type_;
-    string query_;
-    Row row_to_insert;
+    std::string query_;
+    Row row_;
+    Table* table_;
 
-    public:
-    Statement(string q): query_(q) {}
-
+  public:
+    Statement(std::string q, Table* t): query_(q), table_(t) {}
     PrepareResult Prepare();
-
-    void Execute();
+    ExecuteResult Execute();
 };
 
 #endif // STATEMENT_H_
