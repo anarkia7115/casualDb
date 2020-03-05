@@ -3,14 +3,11 @@
 #include "utils.h"
 #include "parser.h"
 
-using namespace std;
-
 PrepareResult 
 Statement::Prepare() {
     if (StartsWith(query_, "insert")) {
         type_ = kStatementInsert;
-        ParseInsert(query_, row_to_insert);
-        return kPrepareSuccess;
+        return ParseInsert(query_, this->row_);
     }
     if (StartsWith(query_, "select")) {
         type_ = kStatementSelect;
@@ -20,18 +17,16 @@ Statement::Prepare() {
     return kPrepareUnrecognizedStatement;
 }
 
-void 
+ExecuteResult
 Statement::Execute() {
     switch (type_)
     {
     case kStatementInsert:
-        cout << "This is where we will do an insert." << endl;
-        break;
+        return this->table_->Insert(this->row_);
     case kStatementSelect:
-        cout << "This is where we will do an insert." << endl;
-        break;
+        return this->table_->Select();
     default:
-        cout << "Unexpected statement type" << endl;
-        break;
+        std::cout << "Unexpected statement type" << std::endl;
+        return kExecuteFail;
     }
 }
