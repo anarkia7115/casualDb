@@ -5,10 +5,24 @@ cc_library(
 )
 
 cc_library(
+    name = "row", 
+    srcs = ["row.cc"], 
+    hdrs = ["row.h", "state.h"]
+)
+
+cc_library(
+    name = "table", 
+    srcs = ["table.cc"], 
+    hdrs = ["table.h", "state.h"], 
+    deps = [":row"]
+)
+
+cc_library(
     name = "statement", 
-    srcs = ["statement.cc", "parser.h"],
-    hdrs = ["statement.h"],
-    deps = [":utils"],
+    srcs = ["statement.cc", "row.cc"],
+    hdrs = ["statement.h", "parser.h"],
+    deps = [":utils", ":table", ":row"],
+    visibility = ["//test:__pkg__"],
 )
 
 cc_library(
