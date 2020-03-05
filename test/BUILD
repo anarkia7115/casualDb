@@ -1,9 +1,9 @@
 cc_test(
-    name = "iss-test",
-    srcs = ["iss-test.cc"],
+    name = "parser-test",
+    srcs = ["parser-test.cc"],
     copts = ["-Iexternal/gtest/include"],
     deps = [
         "@gtest//:main",
-        "//main:repl",
+        "//main:statement",
     ],
 )

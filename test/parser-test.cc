@@ -2,21 +2,26 @@
 #include <sstream>
 #include "main/parser.h"
 
-using namespace std;
-
 TEST(Parser, IStringStream) {
-    istringstream ss("11 aaa bbb ccc ddd");
+    std::istringstream ss("11 aaa bbb ccc ddd");
     int id;
-    string url;
-    string title;
+    std::string url;
+    std::string title;
     int another;
     ss >> id >> url >> title >> another;
-    cout << id << url << title << another;
+    std::cout << id << url << title << another << std::endl;
 
     EXPECT_EQ(id, 11);
     EXPECT_EQ(url, "aaa");
     EXPECT_EQ(title, "bbb");
     EXPECT_EQ(another, 0);
+
+    std::istringstream ss2("22 bbb2");
+    ss2 >> id >> url >> title >> another;
+    std::cout << id << url << title << another << std::endl;
+    EXPECT_EQ(id, 22);
+    EXPECT_EQ(url, "bbb2");
+    EXPECT_EQ(title, "");
 }
 
 TEST(Parser, ParseInsert) {
@@ -32,7 +37,7 @@ TEST(Parser, ParseInsert) {
         row
     );
     EXPECT_EQ(successInsert, kPrepareSuccess);
-    EXPECT_EQ(row.id, 1);
-    EXPECT_EQ(row.url, "cnn.com/exciting");
-    EXPECT_EQ(row.title, "exciting");
+    EXPECT_EQ(row.id, (uint32_t) 1);
+    EXPECT_EQ(strcmp(row.url, "cnn.com/exciting"), 0);
+    EXPECT_EQ(strcmp(row.title, "exciting"), 0);
 }
