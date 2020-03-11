@@ -5,6 +5,21 @@ cc_library(
 )
 
 cc_library(
+    name = "logging_v2", 
+    srcs = ["logging_v2.h"],
+    deps = ["utils"], 
+    visibility = ["//test:__pkg__"],
+)
+
+cc_library(
+    name = "logging", 
+    srcs = ["logging.cc"],
+    hdrs = ["logging.h"],
+    deps = ["utils"], 
+    visibility = ["//test:__pkg__"],
+)
+
+cc_library(
     name = "row", 
     srcs = ["row.cc"], 
     hdrs = ["row.h", "state.h"]

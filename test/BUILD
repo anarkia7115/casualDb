@@ -7,3 +7,22 @@ cc_test(
         "//main:statement",
     ],
 )
+
+cc_test(
+    name = "type-test",
+    srcs = ["type-test.cc"],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "@gtest//:main",
+    ],
+)
+
+cc_test(
+    name = "logging-test",
+    srcs = ["logging-test.cc"],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "@gtest//:main",
+        "//main:logging", 
+    ],
+)
