@@ -41,8 +41,17 @@ int main(int argc, char* argv[]) {
         }
 
         // execute statement
-        statement.Execute();
-        std::cout << "Executed!" << std::endl;
+        switch(statement.Execute()) {
+            case (kExecuteSuccess):
+                std::cout << "Executed!" << std::endl;
+                break;
+            case (kExecuteTableFull):
+                std::cout << "Error: Table full." << std::endl;
+                break;
+            case (kExecuteFail):
+                std::cout << "Failed!" << std::endl;
+                break;
+        }
     }
 }
 
