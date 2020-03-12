@@ -2,13 +2,16 @@
 // #include "my_exception.cc"
 #include "repl.h"
 #include "statement.h"
+#include <string>
 
 int main(int argc, char* argv[]) {
     std::string input;
     Table table = Table();
     while(true) {
         PrintPrompt();
-        std::getline(std::cin, input);
+        if(!std::getline(std::cin, input)) {
+            exit(EXIT_SUCCESS);
+        }
 
         // meta command
         if (input[0] == '.') {
@@ -53,5 +56,5 @@ int DoMetaCommand(std::string input) {
 }
 
 void PrintPrompt() {
-    std::cout << "hello, zen > "; 
+    std::cout << "db > "; 
 }
