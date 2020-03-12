@@ -11,8 +11,8 @@
 class Row{
   public:
     std::uint32_t id;
-    char url[kColumnUrlSize];
-    char title[kColumnTitleSize];
+    char url[kColumnUrlSize+1];
+    char title[kColumnTitleSize+1];
 
   private:
     const static std::uint32_t kIdSize = sizeof(id);
