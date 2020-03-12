@@ -34,3 +34,53 @@ def test_repl_insert_one():
         "db > Bye!", 
     ]
     assert output == [row.encode() for row in expected_output]
+
+
+def test_big_row():
+    url = "w"*255
+    title = "n"*255
+    script = [
+        "insert 1 {} {}".format(url, title), 
+        "select", 
+        ".exit"
+    ]
+    output = exec_sql(script)
+    expected_output = [
+        "db > Executed!", 
+        "db > (1, {}, {})".format(url, title), 
+        "Executed!", 
+        "db > Bye!", 
+    ]
+    assert output == [row.encode() for row in expected_output]
+
+
+def test_too_long_row():
+    url = "w"*256
+    title = "n"*256
+    script = [
+        "insert 1 {} {}".format(url, title), 
+        "select", 
+        ".exit"
+    ]
+    output = exec_sql(script)
+    expected_output = [
+        "db > String is too long.", 
+        "db > Executed!", 
+        "db > Bye!", 
+    ]
+    assert output == [row.encode() for row in expected_output]
+
+
+def test_too_long_row():
+    script = [
+        "insert -1 www.-1.com News[-1]", 
+        "select", 
+        ".exit"
+    ]
+    output = exec_sql(script)
+    expected_output = [
+        "db > ID must be positive.", 
+        "db > Executed!", 
+        "db > Bye!", 
+    ]
+    assert output == [row.encode() for row in expected_output]
