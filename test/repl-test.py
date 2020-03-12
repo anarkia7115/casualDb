@@ -84,3 +84,24 @@ def test_too_long_row():
         "db > Bye!", 
     ]
     assert output == [row.encode() for row in expected_output]
+
+
+def test_data_persistence():
+    script = [
+        "insert 1 www.1.com News[1]", 
+        ".exit"
+    ]
+    output = exec_sql(script)
+    assert output == [
+        b"db > Executed!", 
+        b"db > Bye!", 
+    ]
+
+    assert exec_sql([
+        "select",
+        ".exit", 
+    ]) == [
+        b"db > (1, www.1.com, News[1])", 
+        b"db > Executed!", 
+        b"db > Bye!", 
+    ]
