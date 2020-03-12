@@ -2,3 +2,4 @@
 test/test_log/
 bazel-*
 main/logging_v2.h
+__pycache__
