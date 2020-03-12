@@ -9,6 +9,7 @@ Statement::Prepare() {
         type_ = kStatementInsert;
         return ParseInsert(query_, this->row_);
     }
+
     if (StartsWith(query_, "select")) {
         type_ = kStatementSelect;
         return kPrepareSuccess;
