@@ -8,6 +8,8 @@ typedef enum {
 
 typedef enum {
     kPrepareSuccess, 
+    kPrepareIdNegative, 
+    kPrepareStringTooLong, 
     kPrepareSyntaxError, 
     kPrepareUnrecognizedStatement
 } PrepareResult;

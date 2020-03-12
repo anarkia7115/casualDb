@@ -30,6 +30,12 @@ int main(int argc, char* argv[]) {
         switch(statement.Prepare()) {
             case (kPrepareSuccess):
                 break;
+            case (kPrepareIdNegative):
+                std::cout << "ID must be positive." << std::endl;
+                continue;
+            case (kPrepareStringTooLong):
+                std::cout << "String is too long." << std::endl;
+                continue;
             case (kPrepareUnrecognizedStatement):
                 std::cout << "Unrecognized keyword at start of '" << input
                     << "'." << std::endl;
