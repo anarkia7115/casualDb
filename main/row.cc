@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <cstdio>
 #include "row.h"
 
 void 
@@ -18,5 +19,5 @@ Row::Deserialize(void* source) {
 
 void
 Row::Print() {
-    std::cout << id << url << title << std::endl;
+    printf("(%d, %s, %s)\n", id, url, title);
 }
