@@ -25,20 +25,21 @@ void PrintPrompt() {
 }
 
 void Repl(std::string db_file) {
-    Table table = Table(db_file);
+    Table table;
+    table.Load(db_file);
 
     std::string input;
     while(true) {
         PrintPrompt();
         if(!std::getline(std::cin, input)) {
-            return;
+            break;
         }
 
         // meta command
         if (input[0] == '.') {
             switch(DoMetaCommand(input)) {
                 case (kMetaCommandExit):
-                    return;
+                    break;
                 case (kMetaCommandSuccess):
                     continue;
                 case(kMetaCommandUnrecognizedCommand):
@@ -81,7 +82,9 @@ void Repl(std::string db_file) {
                 std::cout << "Failed!" << std::endl;
                 break;
         }
-    }
+    } // end while read input
+    table.Close();
+    return;
 }
 } // namespace casualdb
 
