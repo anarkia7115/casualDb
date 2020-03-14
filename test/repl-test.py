@@ -1,10 +1,20 @@
 import textwrap
 import pytest
 import subprocess
+import os
 
 
-def exec_sql(input_sql: list):
-    p = subprocess.Popen("./casualdb", 
+@pytest.fixture(scope="function")
+def tmp_file():
+    db_file="test_db_file.casualdb"
+    if os.path.exists(db_file):
+        raise Exception("{} should not be exists".format(db_file))
+    yield db_file
+    os.remove(db_file)
+
+
+def exec_sql(input_sql:list, db_file:str="test_db_file.casualdb"):
+    p = subprocess.Popen(["./casualdb", db_file], 
         stdin=subprocess.PIPE, 
         stdout=subprocess.PIPE)
 
@@ -12,7 +22,7 @@ def exec_sql(input_sql: list):
     return output[0].strip().split(b"\n")
 
 
-def test_repl_insert_full():
+def test_repl_insert_full(tmp_file):
     do_sql = ["insert {i} www.{i}.com News[{i}]".format(i=i) for i in range(1000)]
     do_sql.append(".exit")
     output = exec_sql(do_sql)
@@ -20,7 +30,7 @@ def test_repl_insert_full():
     assert output[-3] == b"db > Error: Table full."
     
 
-def test_repl_insert_one():
+def test_repl_insert_one(tmp_file):
     sql = [
         "insert 1 www.1.com News[1]", 
         "select", 
@@ -36,7 +46,7 @@ def test_repl_insert_one():
     assert output == [row.encode() for row in expected_output]
 
 
-def test_big_row():
+def test_big_row(tmp_file):
     url = "w"*255
     title = "n"*255
     script = [
@@ -54,7 +64,7 @@ def test_big_row():
     assert output == [row.encode() for row in expected_output]
 
 
-def test_too_long_row():
+def test_too_long_row(tmp_file):
     url = "w"*256
     title = "n"*256
     script = [
@@ -71,7 +81,7 @@ def test_too_long_row():
     assert output == [row.encode() for row in expected_output]
 
 
-def test_too_long_row():
+def test_too_long_row(tmp_file):
     script = [
         "insert -1 www.-1.com News[-1]", 
         "select", 
@@ -86,7 +96,8 @@ def test_too_long_row():
     assert output == [row.encode() for row in expected_output]
 
 
-def test_data_persistence():
+def test_data_persistence(tmp_file):
+    delete_file = True
     script = [
         "insert 1 www.1.com News[1]", 
         ".exit"
@@ -102,6 +113,6 @@ def test_data_persistence():
         ".exit", 
     ]) == [
         b"db > (1, www.1.com, News[1])", 
-        b"db > Executed!", 
+        b"Executed!", 
         b"db > Bye!", 
     ]
