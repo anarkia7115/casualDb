@@ -4,3 +4,4 @@ bazel-*
 main/logging_v2.h
 __pycache__
 casualdb
+test/test_bazel/
