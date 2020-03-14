@@ -1,7 +1,9 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+
 cc_library(
     name = "utils", 
-    srcs = ["utils.h"],
+    srcs = ["utils.cc"], 
+    hdrs = ["utils.h"], 
 )
 
 cc_library(
@@ -52,19 +54,11 @@ cc_library(
     visibility = ["//test:__pkg__"],
 )
 
-cc_library(
-    name = "repl", 
-    srcs = ["repl.cc"], 
-    hdrs = ["repl.h"], 
+cc_binary(
+    name = "casualdb", 
+    srcs = ["casualdb.cc"], 
     deps = [
         "statement"
     ],
     visibility = ["//test:__pkg__"],
-)
-
-cc_binary(
-    name = "casualdb", 
-    deps = [
-        ":repl",
-    ]
 )
