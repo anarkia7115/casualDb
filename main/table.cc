@@ -96,12 +96,8 @@ Pager::Flush(uint32_t page_num, uint32_t size) {
 }
 
 Table::Table(std::string db_file) {
-    Pager pager(db_file);
-    this->num_rows_ = pager.file_length / Row::kRowSize;
-}
-
-Table::Table() {
-    Table(".casual_db");
+    this->pager_ = new Pager(db_file);
+    this->num_rows_ = this->pager_->file_length / Row::kRowSize;
 }
 
 Table::~Table() {
