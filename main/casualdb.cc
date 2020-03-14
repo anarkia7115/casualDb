@@ -1,11 +1,27 @@
-#include "repl.h"
-
 #include <iostream>
 #include <string>
 
 #include "main/statement.h"
 
 namespace casualdb {
+
+typedef enum {
+    kMetaCommandSuccess, 
+    kMetaCommandUnrecognizedCommand
+} MetaCommandResult;
+
+int DoMetaCommand(std::string input) {
+    if (input.compare(".exit") == 0) {
+        std::cout << "Bye!" << std::endl;
+        exit(EXIT_SUCCESS);
+    } else {
+        return kMetaCommandUnrecognizedCommand;
+    }
+}
+
+void PrintPrompt() {
+    std::cout << "db > "; 
+}
 
 int main(int argc, char* argv[]) {
     std::string input;
@@ -69,18 +85,5 @@ int main(int argc, char* argv[]) {
                 break;
         }
     }
-}
-
-int DoMetaCommand(std::string input) {
-    if (input.compare(".exit") == 0) {
-        std::cout << "Bye!" << std::endl;
-        exit(EXIT_SUCCESS);
-    } else {
-        return kMetaCommandUnrecognizedCommand;
-    }
-}
-
-void PrintPrompt() {
-    std::cout << "db > "; 
 }
 } // namespace casualdb
