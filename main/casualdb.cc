@@ -32,14 +32,16 @@ void Repl(std::string db_file) {
     while(true) {
         PrintPrompt();
         if(!std::getline(std::cin, input)) {
-            break;
+            table.Close();
+            return;
         }
 
         // meta command
         if (input[0] == '.') {
             switch(DoMetaCommand(input)) {
                 case (kMetaCommandExit):
-                    break;
+                    table.Close();
+                    return;
                 case (kMetaCommandSuccess):
                     continue;
                 case(kMetaCommandUnrecognizedCommand):
