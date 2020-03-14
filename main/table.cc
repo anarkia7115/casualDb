@@ -1,13 +1,16 @@
 #ifndef TABLE_CC_
 #define TABLE_CC_
 
-#include <iostream>
-#include <cstdlib>
-#include "fcntl.h"
-#include "unistd.h"
-
 #include "table.h"
+
+#include <cstdlib>
+#include <fcntl.h>
+#include <unistd.h>
+
+#include <iostream>
+
 #include "row.h"
+#include "logging.h"
 
 Pager::Pager(std::string db_file) {
     int fd = open(
@@ -30,7 +33,62 @@ Pager::Pager(std::string db_file) {
     this->file_length = file_length;
 
     for (uint32_t i=0; i< kTableMaxPages; i++) {
-        this->pages_[i] = NULL;
+        this->pages[i] = NULL;
+    }
+}
+
+Pager::~Pager() {
+    for (uint32_t i=0; i<kTableMaxPages; i++) {
+        void* page = pages[i];
+        if (page) {
+            free(page);
+            pages[i] = NULL;
+        }
+    }
+}
+
+void* 
+Pager::GetPage(uint32_t page_num) {
+    if (page_num > kTableMaxPages) {
+        std::cout << "Tried to fetch page number out of max" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if (this->pages[page_num] == NULL) {
+        void* page = malloc(kPageSize);
+        uint32_t num_pages = file_length / kPageSize;
+
+        if ((file_length % kPageSize) != 0) {
+            num_pages += 1;
+        }
+
+        // read if not new
+        if (page_num <= num_pages) {
+            lseek(this->file_descriptor, page_num*kPageSize, SEEK_SET);
+            ssize_t bytes_read = read(this->file_descriptor, page, kPageSize);
+            if (bytes_read == -1) {
+                std::cout << "Error reading file: " << this->file_descriptor
+                    << errno << std::endl;
+            }
+        }
+
+        this->pages[page_num] = page;
+    }
+    return this->pages[page_num];
+}
+
+void
+Pager::Flush(uint32_t page_num, uint32_t size) {
+    if (this->pages[page_num] == NULL) {
+        Log().Get(kLogError) << "Tried to flush null page.";
+        exit(EXIT_FAILURE);
+    }
+
+    off_t offset = lseek(this->file_descriptor, page_num * kPageSize, SEEK_SET);
+
+    if (offset == -1) {
+        Log().Get(kLogError) << "Error seeking: " << errno;
+        
     }
 }
 
@@ -44,32 +102,43 @@ Table::Table() {
 }
 
 Table::~Table() {
-    for (int i=0; this->pages_[i]; i++) {
-        free(this->pages_[i]);
-    }
-}
+    uint32_t num_full_pages = 
+        this->num_rows_ / kRowsPerPage;
 
-void* 
-Pager::GetPage(uint32_t page_num) {
-    if (page_num > kTableMaxPages) {
-        std::cout << "Tried to fetch page number out of max" << std::endl;
+    // flush all pages
+    for (uint32_t i=0; i < num_full_pages; i++) {
+        // skip if empty page
+        if (pager_->pages[i] == NULL) {
+            continue;
+        }
+        pager_->Flush(i, kPageSize);
+        free(pager_->pages[i]);
+        // TODO is this necessary? 
+        pager_->pages[i] = NULL;
+    }
+
+    // There may be a partial page to write 
+    // at the end of file
+    uint32_t num_additional_rows = 
+        this->num_rows_ % kRowsPerPage;
+    if(num_additional_rows > 0) {
+        uint32_t page_num = num_full_pages;
+        if(pager_->pages[page_num] != NULL) {
+            pager_->Flush(page_num, num_additional_rows);
+            free(pager_->pages[page_num]);
+            pager_->pages[page_num] = NULL;
+        }
+    }
+
+    int result = close(pager_->file_descriptor);
+    if (result == -1) {
+        std::cout << "Error closing db file."
+            << std::endl;
         exit(EXIT_FAILURE);
     }
-
-    if (this->pages_[page_num] == NULL) {
-        void* page = malloc(kPageSize);
-        uint32_t num_pages = file_length / kPageSize;
-
-        // TODO: save a partial page
-        if (file_length % kPageSize) {
-            num_pages += 1;
-        }
-
-        // read if not new
-        if (page_num <= num_pages)
-
-    }
-
+    // free all pages
+    // move this to ~Pager()
+    free(pager_);
 }
 
 void* 

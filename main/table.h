@@ -1,8 +1,10 @@
 #ifndef TABLE_H_
 #define TABLE_H_
 
-#include <string>
 #include <cstdint>
+
+#include <string>
+
 #include "row.h"
 #include "state.h"
 
@@ -12,13 +14,14 @@ const uint32_t kRowsPerPage = kPageSize / Row::kRowSize;
 const uint32_t kTableMaxRows = kRowsPerPage * kTableMaxPages;
 
 class Pager {
-  int file_descriptor;
-  void* pages_[kTableMaxPages];
 public:
   uint32_t file_length;
+  int file_descriptor;
+  void* pages[kTableMaxPages];
   Pager(std::string db_file);
-  void* GetPage(std::uint32_t page_number);
   ~Pager();
+  void* GetPage(std::uint32_t page_number);
+  void Flush(uint32_t i, uint32_t size);
 };
 
 class Table {

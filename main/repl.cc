@@ -1,12 +1,20 @@
-#include <iostream>
-// #include "my_exception.cc"
 #include "repl.h"
-#include "statement.h"
+
+#include <iostream>
 #include <string>
+
+#include "statement.h"
 
 int main(int argc, char* argv[]) {
     std::string input;
-    Table table = Table();
+    Table table;
+    if (argc >= 2) {
+        std::string filename (argv[1]); 
+        table = Table(filename);
+    } else {
+        table = Table();
+    }
+
     while(true) {
         PrintPrompt();
         if(!std::getline(std::cin, input)) {
