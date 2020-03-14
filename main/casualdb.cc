@@ -6,6 +6,7 @@
 namespace casualdb {
 
 typedef enum {
+    kMetaCommandExit,
     kMetaCommandSuccess, 
     kMetaCommandUnrecognizedCommand
 } MetaCommandResult;
@@ -13,7 +14,7 @@ typedef enum {
 int DoMetaCommand(std::string input) {
     if (input.compare(".exit") == 0) {
         std::cout << "Bye!" << std::endl;
-        exit(EXIT_SUCCESS);
+        return kMetaCommandExit;
     } else {
         return kMetaCommandUnrecognizedCommand;
     }
@@ -23,25 +24,21 @@ void PrintPrompt() {
     std::cout << "db > "; 
 }
 
-int main(int argc, char* argv[]) {
-    std::string input;
-    Table table;
-    if (argc >= 2) {
-        std::string filename (argv[1]); 
-        table = Table(filename);
-    } else {
-        table = Table();
-    }
+void Repl(std::string db_file) {
+    Table table = Table(db_file);
 
+    std::string input;
     while(true) {
         PrintPrompt();
         if(!std::getline(std::cin, input)) {
-            exit(EXIT_SUCCESS);
+            return;
         }
 
         // meta command
         if (input[0] == '.') {
             switch(DoMetaCommand(input)) {
+                case (kMetaCommandExit):
+                    return;
                 case (kMetaCommandSuccess):
                     continue;
                 case(kMetaCommandUnrecognizedCommand):
@@ -87,3 +84,12 @@ int main(int argc, char* argv[]) {
     }
 }
 } // namespace casualdb
+
+int main(int argc, char* argv[]) {
+    if (argc >= 2) {
+        casualdb::Repl(argv[1]);
+    } else {
+        casualdb::Repl(".casualdb");
+    }
+    return 0;
+}
