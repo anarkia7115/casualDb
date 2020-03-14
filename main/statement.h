@@ -1,7 +1,9 @@
 #ifndef STATEMENT_H_
 #define STATEMENT_H_
+
 #include <map>
 #include <string>
+
 #include "row.h"
 #include "table.h"
 

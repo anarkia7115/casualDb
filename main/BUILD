@@ -5,9 +5,13 @@ cc_library(
 )
 
 cc_library(
+    name = "parser", 
+    srcs = ["parser.h"],
+)
+
+cc_library(
     name = "logging_v2", 
     srcs = ["logging_v2.h"],
-    deps = ["utils"], 
     visibility = ["//test:__pkg__"],
 )
 
@@ -15,28 +19,36 @@ cc_library(
     name = "logging", 
     srcs = ["logging.cc"],
     hdrs = ["logging.h"],
-    deps = ["utils"], 
+    deps = [":utils"], 
     visibility = ["//test:__pkg__"],
 )
 
 cc_library(
     name = "row", 
     srcs = ["row.cc"], 
-    hdrs = ["row.h", "state.h"]
+    hdrs = ["row.h"], 
 )
 
 cc_library(
     name = "table", 
     srcs = ["table.cc"], 
     hdrs = ["table.h", "state.h"], 
-    deps = [":row"]
+    deps = [
+        ":row", 
+        ":logging" 
+    ]
 )
 
 cc_library(
     name = "statement", 
-    srcs = ["statement.cc", "row.cc"],
-    hdrs = ["statement.h", "parser.h"],
-    deps = [":utils", ":table", ":row"],
+    srcs = ["statement.cc"],
+    hdrs = ["statement.h"],
+    deps = [
+        ":utils", 
+        ":parser", 
+        ":row", 
+        ":table"
+    ], 
     visibility = ["//test:__pkg__"],
 )
 
@@ -45,8 +57,7 @@ cc_library(
     srcs = ["repl.cc"], 
     hdrs = ["repl.h"], 
     deps = [
-        ":statement",
-        ":utils", 
+        "statement"
     ],
     visibility = ["//test:__pkg__"],
 )

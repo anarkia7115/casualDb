@@ -1,6 +1,5 @@
 #ifndef PARSER_H_
 #define PARSER_H_
-#include "statement.h"
 #include <sstream>
 #include <cstring>
 PrepareResult ParseInsert(std::string query, Row &row_to_insert) {

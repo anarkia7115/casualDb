@@ -1,7 +1,9 @@
-#include <iostream>
+#include "row.h"
+
 #include <cstring>
 #include <cstdio>
-#include "row.h"
+
+#include <iostream>
 
 void 
 Row::Serialize(void* destination) {
