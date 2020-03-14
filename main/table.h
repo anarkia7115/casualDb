@@ -22,8 +22,10 @@ public:
   uint32_t file_length;
   int file_descriptor;
   void* pages[kTableMaxPages];
-  Pager(std::string db_file);
+  Pager();
   ~Pager();
+
+  void Load(std::string db_file);
   void* GetPage(std::uint32_t page_number);
   void Flush(uint32_t i, uint32_t size);
 };
@@ -34,9 +36,10 @@ class Table {
     void* RowSlot(std::uint32_t row_num);
 
   public:
-    Table(std::string db_file);
     Table();
     ~Table();
+    void Load(std::string db_file);
+    void Close();
     ExecuteResult Insert(Row row);
     ExecuteResult Select();
 };

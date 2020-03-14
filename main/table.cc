@@ -3,11 +3,13 @@
 
 #include "table.h"
 
+#include <cstdio>
 #include <cstdlib>
 #include <fcntl.h>
 #include <unistd.h>
 
 #include <iostream>
+#include <stdexcept>
 
 #include "main/row.h"
 #include "main/logging.h"
@@ -15,7 +17,9 @@
 namespace casualdb
 {
 
-Pager::Pager(std::string db_file) {
+Pager::Pager() {}
+
+void Pager::Load(std::string db_file) {
     int fd = open(
         db_file.c_str(), 
         O_RDWR |
@@ -25,9 +29,7 @@ Pager::Pager(std::string db_file) {
     );
 
     if (fd == -1) {
-        std::cout << "Unable to open file"
-            << std::endl;
-        exit(EXIT_FAILURE);
+        throw std::runtime_error("Unable to open file.\n");
     }
 
     off_t file_length = lseek(fd, 0, SEEK_END);
@@ -53,8 +55,7 @@ Pager::~Pager() {
 void* 
 Pager::GetPage(uint32_t page_num) {
     if (page_num > kTableMaxPages) {
-        std::cout << "Tried to fetch page number out of max" << std::endl;
-        exit(EXIT_FAILURE);
+        throw std::out_of_range("Tried to fetch page number out of max.\n");
     }
 
     if (this->pages[page_num] == NULL) {
@@ -80,31 +81,46 @@ Pager::GetPage(uint32_t page_num) {
     return this->pages[page_num];
 }
 
+/** Write page to file */
 void
 Pager::Flush(uint32_t page_num, uint32_t size) {
     if (this->pages[page_num] == NULL) {
-        Log().Get(kLogError) << "Tried to flush null page.";
-        exit(EXIT_FAILURE);
+        throw std::runtime_error("Tried to flush null page.\n");
     }
 
     off_t offset = lseek(this->file_descriptor, page_num * kPageSize, SEEK_SET);
 
     if (offset == -1) {
-        Log().Get(kLogError) << "Error seeking: " << errno;
-        
+        throw std::runtime_error("Error seeking: " + std::to_string(errno) + "\n");
+    }
+
+    ssize_t bytes_written = 
+        write(this->file_descriptor, this->pages[page_num], size);
+
+    if (bytes_written == -1) {
+        throw std::runtime_error("Error writing: " + std::to_string(errno) + "\n");
     }
 }
 
-Table::Table(std::string db_file) {
-    this->pager_ = new Pager(db_file);
+Table::Table() {
+    this->pager_ = new Pager();
+}
+
+void Table::Load(std::string db_file) {
+    this->pager_->Load(db_file);
     this->num_rows_ = this->pager_->file_length / Row::kRowSize;
 }
 
 Table::~Table() {
+    free(pager_);
+}
+
+void
+Table::Close() {
     uint32_t num_full_pages = 
         this->num_rows_ / kRowsPerPage;
 
-    // flush all pages
+    // flush all pages to file
     for (uint32_t i=0; i < num_full_pages; i++) {
         // skip if empty page
         if (pager_->pages[i] == NULL) {
@@ -112,12 +128,11 @@ Table::~Table() {
         }
         pager_->Flush(i, kPageSize);
         free(pager_->pages[i]);
-        // TODO is this necessary? 
+        // TODO: is this necessary? 
         pager_->pages[i] = NULL;
     }
 
-    // There may be a partial page to write 
-    // at the end of file
+    // Last page
     uint32_t num_additional_rows = 
         this->num_rows_ % kRowsPerPage;
     if(num_additional_rows > 0) {
@@ -131,13 +146,8 @@ Table::~Table() {
 
     int result = close(pager_->file_descriptor);
     if (result == -1) {
-        std::cout << "Error closing db file."
-            << std::endl;
-        exit(EXIT_FAILURE);
+        throw std::runtime_error("Error closing db file.\n");
     }
-    // free all pages
-    // move this to ~Pager()
-    free(pager_);
 }
 
 void* 
