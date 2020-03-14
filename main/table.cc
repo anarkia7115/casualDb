@@ -138,7 +138,7 @@ Table::Close() {
     if(num_additional_rows > 0) {
         uint32_t page_num = num_full_pages;
         if(pager_->pages[page_num] != NULL) {
-            pager_->Flush(page_num, num_additional_rows);
+            pager_->Flush(page_num, num_additional_rows*Row::kRowSize);
             free(pager_->pages[page_num]);
             pager_->pages[page_num] = NULL;
         }
