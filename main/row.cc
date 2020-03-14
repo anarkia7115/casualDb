@@ -4,6 +4,9 @@
 #include <cstdio>
 
 #include <iostream>
+namespace casualdb
+{
+
 
 void 
 Row::Serialize(void* destination) {
@@ -23,3 +26,5 @@ void
 Row::Print() {
     printf("(%d, %s, %s)\n", id, url, title);
 }
+
+} // namespace casualdb

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 
+namespace casualdb {
 enum LogLevel {
     kLogError, 
     kLogWarning, 
@@ -27,5 +28,6 @@ protected:
 private:
     LogLevel message_level;
 };
+} // namespace casualdb
 
 #endif // LOGGING_H_

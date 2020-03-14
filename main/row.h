@@ -2,6 +2,8 @@
 #define ROW_H_
 #include <cstdint>
 
+namespace casualdb
+{
 #define kColumnUrlSize 255
 #define kColumnTitleSize 255
 
@@ -30,5 +32,7 @@ class Row{
     void Deserialize(void* source);
     void Print();
 };
+  
+} // namespace casualdb
 
 #endif // ROW_H_

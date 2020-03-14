@@ -4,8 +4,12 @@
 #include <map>
 #include <string>
 
-#include "row.h"
-#include "table.h"
+#include "main/row.h"
+#include "main/table.h"
+
+namespace casualdb
+{
+
 
 class Statement {
   private:
@@ -19,5 +23,6 @@ class Statement {
     PrepareResult Prepare();
     ExecuteResult Execute();
 };
+} // namespace casualdb
 
 #endif // STATEMENT_H_

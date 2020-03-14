@@ -1,6 +1,7 @@
-#include "logging.h"
-#include "utils.h"
+#include "main/logging.h"
+#include "main/utils.h"
 
+namespace casualdb {
 std::string Log::LogLevelName(LogLevel log_level) {
     switch (log_level)
     {
@@ -38,3 +39,4 @@ Log::~Log() {
         fflush(stderr);
     }
 }
+} // namespace casualdb

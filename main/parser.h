@@ -2,6 +2,8 @@
 #define PARSER_H_
 #include <sstream>
 #include <cstring>
+
+namespace casualdb {
 PrepareResult ParseInsert(std::string query, Row &row_to_insert) {
     /*
     id int
@@ -37,5 +39,6 @@ PrepareResult ParseInsert(std::string query, Row &row_to_insert) {
 
     return kPrepareSuccess;
 }
+} // namespace casualdb
 
 #endif // PARSER_H_

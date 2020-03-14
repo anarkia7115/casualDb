@@ -3,7 +3,9 @@
 #include <iostream>
 #include <string>
 
-#include "statement.h"
+#include "main/statement.h"
+
+namespace casualdb {
 
 int main(int argc, char* argv[]) {
     std::string input;
@@ -81,3 +83,4 @@ int DoMetaCommand(std::string input) {
 void PrintPrompt() {
     std::cout << "db > "; 
 }
+} // namespace casualdb

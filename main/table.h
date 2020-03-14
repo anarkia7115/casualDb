@@ -5,8 +5,12 @@
 
 #include <string>
 
-#include "row.h"
-#include "state.h"
+#include "main/row.h"
+#include "main/state.h"
+
+namespace casualdb
+{
+
 
 const uint32_t kPageSize = 4096;
 #define kTableMaxPages 100
@@ -36,5 +40,7 @@ class Table {
     ExecuteResult Insert(Row row);
     ExecuteResult Select();
 };
+  
+} // namespace casualdb
 
 #endif // TABLE_H_

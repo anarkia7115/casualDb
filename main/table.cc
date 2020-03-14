@@ -9,8 +9,11 @@
 
 #include <iostream>
 
-#include "row.h"
-#include "logging.h"
+#include "main/row.h"
+#include "main/logging.h"
+
+namespace casualdb
+{
 
 Pager::Pager(std::string db_file) {
     int fd = open(
@@ -171,5 +174,6 @@ Table::Select() {
     }
     return kExecuteSuccess;
 }
+} // namespace casualdb
 
 #endif // TABLE_CC_

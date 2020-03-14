@@ -2,8 +2,11 @@
 
 #include <iostream>
 
-#include "utils.h"
-#include "parser.h"
+#include "main/utils.h"
+#include "main/parser.h"
+
+namespace casualdb
+{
 
 PrepareResult 
 Statement::Prepare() {
@@ -33,3 +36,5 @@ Statement::Execute() {
         return kExecuteFail;
     }
 }
+    
+} // namespace casualdb

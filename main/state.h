@@ -1,6 +1,9 @@
 #ifndef STATE_H_
 #define STATE_H_
 
+namespace casualdb
+{
+
 typedef enum {
     kStatementInsert, 
     kStatementSelect
@@ -19,5 +22,7 @@ typedef enum {
     kExecuteTableFull, 
     kExecuteFail
 } ExecuteResult; 
+    
+} // namespace casualdb
 
 #endif // STATE_H_
