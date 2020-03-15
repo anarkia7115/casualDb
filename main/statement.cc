@@ -1,9 +1,11 @@
-#include "statement.h"
+#include "main/statement.h"
 
 #include <iostream>
 
 #include "main/utils.h"
 #include "main/parser.h"
+#include "main/state.h"
+#include "main/cursor.h"
 
 namespace casualdb
 {
@@ -27,10 +29,17 @@ ExecuteResult
 Statement::Execute() {
     switch (type_)
     {
+    Cursor* cursor;
     case kStatementInsert:
-        return this->table_->Insert(this->row_);
+        cursor = new Cursor(table_, kTableEnd);
+        return cursor->Insert(this->row_);
     case kStatementSelect:
-        return this->table_->Select();
+        cursor = new Cursor(table_, kTableStart);
+        while(!(cursor->end_of_table)) {
+            cursor->Select().Print();
+            cursor->Advance();
+        }
+        return kExecuteSuccess;
     default:
         std::cout << "Unexpected statement type" << std::endl;
         return kExecuteFail;
