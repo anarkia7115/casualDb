@@ -1,5 +1,6 @@
 #ifndef ROW_H_
 #define ROW_H_
+
 #include <cstdint>
 
 namespace casualdb
@@ -28,8 +29,8 @@ class Row{
   public:
     const static std::uint32_t kRowSize = kIdSize + kUrlSize + kTitleSize;
 
-    void Serialize(void* destination);
-    void Deserialize(void* source);
+    void Serialize(Row* destination);
+    void Deserialize(Row* source);
     void Print();
 };
   

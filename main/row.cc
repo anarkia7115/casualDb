@@ -7,19 +7,18 @@
 namespace casualdb
 {
 
-
 void 
-Row::Serialize(void* destination) {
-    memcpy(destination + kIdOffset, &(this->id), kIdSize);
-    memcpy(destination + kUrlOffset, &(this->url), kUrlSize);
-    memcpy(destination + kTitleOffset, &(this->title), kTitleSize);
+Row::Serialize(Row* destination) {
+    destination->id = this->id;
+    std::strcpy(destination->url, this->url);
+    std::strcpy(destination->title, this->title);
 }
 
 void 
-Row::Deserialize(void* source) {
-    memcpy( &(this->id), source + kIdOffset, kIdSize);
-    memcpy( &(this->url), source + kUrlOffset, kUrlSize);
-    memcpy( &(this->title), source + kTitleOffset, kTitleSize);
+Row::Deserialize(Row* source) {
+    this->id = source->id;
+    std::strcpy(this->url, source->url);
+    std::strcpy(this->title, source->title);
 }
 
 void
