@@ -44,7 +44,7 @@ void Pager::Load(std::string db_file) {
 
 Pager::~Pager() {
     for (uint32_t i=0; i<kTableMaxPages; i++) {
-        void* page = pages[i];
+        void* page(pages[i]);
         if (page) {
             free(page);
             pages[i] = NULL;
@@ -52,7 +52,7 @@ Pager::~Pager() {
     }
 }
 
-void* 
+void*
 Pager::GetPage(uint32_t page_num) {
     if (page_num > kTableMaxPages) {
         throw std::out_of_range("Tried to fetch page number out of max.\n");
@@ -103,82 +103,50 @@ Pager::Flush(uint32_t page_num, uint32_t size) {
 }
 
 Table::Table() {
-    this->pager_ = new Pager();
+    this->pager = new Pager();
 }
 
 void Table::Load(std::string db_file) {
-    this->pager_->Load(db_file);
-    this->num_rows_ = this->pager_->file_length / Row::kRowSize;
+    this->pager->Load(db_file);
+    this->num_rows = this->pager->file_length / Row::kRowSize;
 }
 
 Table::~Table() {
-    free(pager_);
 }
 
 void
 Table::Close() {
     uint32_t num_full_pages = 
-        this->num_rows_ / kRowsPerPage;
+        this->num_rows / kRowsPerPage;
 
     // flush all pages to file
     for (uint32_t i=0; i < num_full_pages; i++) {
         // skip if empty page
-        if (pager_->pages[i] == NULL) {
+        if (pager->pages[i] == NULL) {
             continue;
         }
-        pager_->Flush(i, kPageSize);
-        free(pager_->pages[i]);
+        pager->Flush(i, kPageSize);
+        free(pager->pages[i]);
         // TODO: is this necessary? 
-        pager_->pages[i] = NULL;
+        pager->pages[i] = NULL;
     }
 
     // Last page
     uint32_t num_additional_rows = 
-        this->num_rows_ % kRowsPerPage;
+        this->num_rows % kRowsPerPage;
     if(num_additional_rows > 0) {
         uint32_t page_num = num_full_pages;
-        if(pager_->pages[page_num] != NULL) {
-            pager_->Flush(page_num, num_additional_rows*Row::kRowSize);
-            free(pager_->pages[page_num]);
-            pager_->pages[page_num] = NULL;
+        if(pager->pages[page_num] != NULL) {
+            pager->Flush(page_num, num_additional_rows*Row::kRowSize);
+            free(pager->pages[page_num]);
+            pager->pages[page_num] = NULL;
         }
     }
 
-    int result = close(pager_->file_descriptor);
+    int result = close(pager->file_descriptor);
     if (result == -1) {
         throw std::runtime_error("Error closing db file.\n");
     }
-}
-
-void* 
-Table::RowSlot(uint32_t row_num) {
-    uint32_t page_num = row_num / kRowsPerPage;
-    void* page = this->pager_->GetPage(page_num);
-    uint32_t row_offset = row_num % kRowsPerPage;
-    uint32_t byte_offset = row_offset * Row::kRowSize;
-    return page + byte_offset;
-}
-
-ExecuteResult
-Table::Insert(Row row_to_insert) {
-    if (this->num_rows_ >= kTableMaxRows) {
-        return kExecuteTableFull;
-    }
-
-    row_to_insert.Serialize(RowSlot(this->num_rows_));
-    this->num_rows_ += 1;
-
-    return kExecuteSuccess;
-}
-
-ExecuteResult
-Table::Select() {
-    Row row;
-    for (uint32_t i = 0; i < this->num_rows_; i++) {
-        row.Deserialize(RowSlot(i));
-        row.Print();
-    }
-    return kExecuteSuccess;
 }
 } // namespace casualdb
 

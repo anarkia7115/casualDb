@@ -6,7 +6,6 @@
 #include <string>
 
 #include "main/row.h"
-#include "main/state.h"
 
 namespace casualdb
 {
@@ -31,17 +30,15 @@ public:
 };
 
 class Table {
-    uint32_t num_rows_;
-    Pager* pager_;
-    void* RowSlot(std::uint32_t row_num);
 
   public:
+    Pager* pager;
+    uint32_t num_rows;
+
     Table();
     ~Table();
     void Load(std::string db_file);
     void Close();
-    ExecuteResult Insert(Row row);
-    ExecuteResult Select();
 };
   
 } // namespace casualdb
