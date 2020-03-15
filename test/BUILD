@@ -26,3 +26,12 @@ cc_test(
         "//main:logging", 
     ],
 )
+
+cc_test(
+    name = "size-of-string-test",
+    srcs = ["size-of-string-test.cc"],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "@gtest//:main",
+    ],
+)
