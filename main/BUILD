@@ -42,6 +42,15 @@ cc_library(
 )
 
 cc_library(
+    name = "cursor", 
+    srcs = ["cursor.cc"], 
+    hdrs = ["cursor.h", "state.h"], 
+    deps = [
+        ":table", 
+    ]
+)
+
+cc_library(
     name = "statement", 
     srcs = ["statement.cc"],
     hdrs = ["statement.h"],
@@ -49,7 +58,8 @@ cc_library(
         ":utils", 
         ":parser", 
         ":row", 
-        ":table"
+        ":table", 
+        ":cursor"
     ], 
     visibility = ["//test:__pkg__"],
 )
