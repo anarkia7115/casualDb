@@ -6,6 +6,7 @@
 
 #include "main/row.h"
 #include "main/table.h"
+#include "main/state.h"
 
 namespace casualdb
 {
